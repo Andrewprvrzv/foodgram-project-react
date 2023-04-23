@@ -15,7 +15,7 @@ def ingredient_create(row):
 
 
 class Command(BaseCommand):
-    help = "Load ingredients to DB"
+    help = "Загрузка ингредиентов в БД"
 
     def handle(self, *args, **options):
         path = os.path.join(settings.BASE_DIR, 'ingredients.csv')
@@ -29,4 +29,4 @@ class Command(BaseCommand):
                 bar.next()
                 ingredient_create(row)
             bar.finish()
-        self.stdout.write("[!] The ingredients has been loaded successfully.")
+        self.stdout.write("Ингредиенты успешно загружены!!!")

@@ -37,7 +37,7 @@ class IngredientCountAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Favorites)
-class FavoriteAdmin(admin.ModelAdmin):
+class FavoritesAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'recipe')
     list_editable = ('user', 'recipe')
 
