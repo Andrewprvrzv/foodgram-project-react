@@ -9,7 +9,7 @@ class User(AbstractUser):
         blank=False,
         unique=True,
         validators=[
-            RegexValidator('^[\w.@+-]+\z',
+            RegexValidator('^[\w.@+-]+',
                            message='Недопустимое имя.')
         ]
     )

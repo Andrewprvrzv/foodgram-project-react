@@ -9,14 +9,16 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(
-        'Название',
         max_length=200,
-        unique=True
+        unique=True,
+        verbose_name='Тэг',
+        help_text='Назначьте тэг'
     )
     color = models.CharField(
-        'Цвет в HEX',
         max_length=7,
         null=True,
+        verbose_name='Цвет тэга',
+        help_text='Выберите цвет тэга',
         validators=[
             RegexValidator(
                 '^#([a-fA-F0-9]{6})',
@@ -26,6 +28,8 @@ class Tag(models.Model):
     )
     slug = models.CharField(
         max_length=200,
+        verbose_name='Слаг тэга',
+        help_text='Slug тэга',
         validators=[
             RegexValidator(
                 '^[\w.@+-]+\z',
@@ -40,12 +44,14 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        'Ингредиент',
         max_length=200,
-        unique=True
+        unique=True,
+        verbose_name='Наименование ингредиента',
+        help_text='Выберите ингредиент'
     )
     measurement_unit = models.CharField(
-        'Единица измерения',
+        verbose_name='Единица измерения',
+        help_text='Единица измерения',
         max_length=200,
     )
 
