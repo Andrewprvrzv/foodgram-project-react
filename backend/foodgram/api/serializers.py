@@ -3,7 +3,7 @@ from django.core import exceptions as django_exceptions
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers
 
-from api.models import User, Tag
+from recipes.models import User, Tag
 from users.models import Subscribe
 
 

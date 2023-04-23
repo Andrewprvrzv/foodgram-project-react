@@ -4,9 +4,9 @@ from rest_framework.routers import DefaultRouter
 from .views import UsersViewSet, TagViewSet, IngredientsViewSet
 
 router = DefaultRouter()
-router.register('users', UsersViewSet)
-router.register('tags', TagViewSet)
-router.register('ingredients', IngredientsViewSet)
+router.register(r'users', UsersViewSet)
+router.register(r'tags', TagViewSet)
+router.register(r'ingredients', IngredientsViewSet)
 
 urlpatterns = [
     path(r'auth/', include('djoser.urls.authtoken')),

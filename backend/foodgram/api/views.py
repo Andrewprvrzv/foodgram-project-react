@@ -1,18 +1,20 @@
 from django.contrib.auth.hashers import make_password
-from django.shortcuts import render
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, mixins
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from api.models import User, Tag, Ingredient
+from recipes.models import User, Tag, Ingredient
 from api.serializers import (PasswordSerializer, UserGetSerializer,
                              UserCreateSerializer, TagSerializer,
                              IngredientSerializer)
 
 
-class UsersViewSet(viewsets.ModelViewSet):
+class UsersViewSet(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   viewsets.GenericViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
@@ -34,9 +36,8 @@ class UsersViewSet(viewsets.ModelViewSet):
         else:
             serializer.save()
 
-    @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated, ]
-    )
+    @action(methods=["get"], detail=False,
+            permission_classes=(IsAuthenticated,))
     def me(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=request.user.id)
         serializer = UserGetSerializer(user)
@@ -51,20 +52,27 @@ class UsersViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Пароль успешно изменен!'},
                         status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=['get'],
+            permission_classes=(IsAuthenticated,))
+    def subscriptions(self, request):
+        pass
 
-class TagViewSet(viewsets.ModelViewSet):
+
+class TagViewSet(mixins.ListModelMixin,
+                 mixins.RetrieveModelMixin,
+                 viewsets.GenericViewSet):
     permission_classes = (AllowAny,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    http_method_names = ('get',)
 
 
-class IngredientsViewSet(viewsets.ModelViewSet):
+class IngredientsViewSet(mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         viewsets.GenericViewSet):
     permission_classes = (AllowAny,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    http_method_names = ('get',)
-    filter_backends = (filters.SearchFilter, )
-    search_fields = ('^name', )
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
