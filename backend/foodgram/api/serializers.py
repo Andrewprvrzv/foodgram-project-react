@@ -15,8 +15,8 @@ class UserGetSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed']
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
@@ -79,6 +79,63 @@ class PasswordSerializer(serializers.Serializer):
         return validated_data
 
 
+class RecipeShortSerializer(serializers.ModelSerializer):
+    """Для использования в подписках."""
+    image = Base64ImageField()
+    name = serializers.ReadOnlyField()
+    cooking_time = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """[GET] Список авторов на которых подписан пользователь."""
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = RecipeShortSerializer(many=True, read_only=True)
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        if (self.context.get('request')
+                and not self.context['request'].user.is_anonymous):
+            return Subscribe.objects.filter(user=self.context['request'].user,
+                                            author=obj).exists()
+        return False
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    """Подписка на автора и отписка."""
+    email = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = RecipeShortSerializer(many=True, read_only=True)
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        if (self.context.get('request')
+                and not self.context['request'].user.is_anonymous):
+            return Subscribe.objects.filter(user=self.context['request'].user,
+                                            author=obj).exists()
+        return False
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+
 class TagSerializer(serializers.ModelSerializer):
     """[GET] Список тегов."""
 
@@ -134,8 +191,8 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return (
                 self.context.get('request').user.is_authenticated
                 and ShoppingCart.objects.filter(
-                    user=self.context['request'].user,
-                    recipe=obj).exists()
+            user=self.context['request'].user,
+            recipe=obj).exists()
         )
 
 

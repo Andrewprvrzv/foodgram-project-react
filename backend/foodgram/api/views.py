@@ -1,16 +1,19 @@
 from django.contrib.auth.hashers import make_password
-from rest_framework import viewsets, status, filters, mixins
+from rest_framework import viewsets, status, filters, mixins, serializers
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from api.pagination import CustomPaginator
 from api.permissions import IsAuthorOrReadOnly
 from recipes.models import User, Tag, Ingredient, Recipe
 from api.serializers import (PasswordSerializer, UserGetSerializer,
                              UserCreateSerializer, TagSerializer,
                              IngredientSerializer, RecipeGetSerializer,
-                             RecipeCreateSerializer)
+                             RecipeCreateSerializer, SubscriptionSerializer,
+                             SubscribeSerializer)
+from users.models import Subscribe
 
 
 class UsersViewSet(mixins.CreateModelMixin,
@@ -54,10 +57,41 @@ class UsersViewSet(mixins.CreateModelMixin,
         return Response({'detail': 'Пароль успешно изменен!'},
                         status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['get'],
+    @action(detail=False, methods=['get'], pagination_class=CustomPaginator,
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
-        pass
+        queryset = User.objects.filter(subscribing__user=request.user)
+        page = self.paginate_queryset(queryset)
+        serializer = SubscriptionSerializer(page, many=True,
+                                            context={'request': request})
+        return self.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=['post', 'delete'],
+            pagination_class=CustomPaginator,
+            permission_classes=(IsAuthenticated,))
+    def subscribe(self, request, **kwargs):
+        author = get_object_or_404(User, pk=kwargs['pk'])
+
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(
+                author, data=request.data, context={"request": request})
+            if request.user == author:
+                return Response({'detail': 'Ошибка подписки'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if Subscribe.objects.filter(user=request.user,
+                                        author=author).exists():
+                return Response({'detail': 'Вы уже подписаны'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
+            Subscribe.objects.create(user=request.user, author=author)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
+            get_object_or_404(Subscribe, user=request.user,
+                              author=author).delete()
+            return Response({'detail': 'Успешная отписка'},
+                            status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(mixins.ListModelMixin,
@@ -83,12 +117,9 @@ class IngredientsViewSet(mixins.ListModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAuthorOrReadOnly, )
+    permission_classes = (IsAuthorOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipeGetSerializer
         return RecipeCreateSerializer
-
-
-
