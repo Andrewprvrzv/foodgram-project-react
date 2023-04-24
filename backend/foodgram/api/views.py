@@ -5,10 +5,12 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from recipes.models import User, Tag, Ingredient
+from api.permissions import IsAuthorOrReadOnly
+from recipes.models import User, Tag, Ingredient, Recipe
 from api.serializers import (PasswordSerializer, UserGetSerializer,
                              UserCreateSerializer, TagSerializer,
-                             IngredientSerializer)
+                             IngredientSerializer, RecipeGetSerializer,
+                             RecipeCreateSerializer)
 
 
 class UsersViewSet(mixins.CreateModelMixin,
@@ -76,3 +78,17 @@ class IngredientsViewSet(mixins.ListModelMixin,
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = (IsAuthorOrReadOnly, )
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return RecipeGetSerializer
+        return RecipeCreateSerializer
+
+
+
