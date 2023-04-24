@@ -198,3 +198,4 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     pass
+
