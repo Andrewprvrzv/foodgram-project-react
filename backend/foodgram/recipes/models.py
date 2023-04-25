@@ -32,7 +32,7 @@ class Tag(models.Model):
         help_text='Slug тэга',
         validators=[
             RegexValidator(
-                '^[\w.@+-]+\z',
+                '^[\w.@+-]+',
                 message='Недопустимое имя.')
         ],
         unique=True
@@ -84,7 +84,12 @@ class Recipe(models.Model):
         validators=[validate_nonzero, ]
     )
     tags = models.ManyToManyField(Tag)
-    ingredients = models.ManyToManyField(Ingredient)
+
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='IngredientCount',
+        through_fields=('recipe', 'ingredient'),
+    )
 
     def __str__(self):
         return self.name
@@ -93,10 +98,12 @@ class Recipe(models.Model):
 class Favorites(models.Model):
     user = models.ForeignKey(
         User,
+        related_name='favorite_user',
         on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
         Recipe,
+        related_name='favorite_recipe',
         on_delete=models.CASCADE,
     )
 
@@ -114,11 +121,13 @@ class Favorites(models.Model):
 class IngredientCount(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipes'
     )
-    name = models.ForeignKey(
+    ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='ingredients',
     )
     amount = models.PositiveIntegerField(
         'Количество',

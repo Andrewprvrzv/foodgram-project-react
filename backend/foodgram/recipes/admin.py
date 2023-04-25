@@ -20,7 +20,6 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'author', 'in_favorites')
-
     readonly_fields = ('in_favorites',)
     list_filter = ('name', 'author', 'tags')
     empty_value_display = '-пусто-'
@@ -32,8 +31,8 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(models.IngredientCount)
 class IngredientCountAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'recipe', 'name', 'amount')
-    list_editable = ('recipe', 'name', 'amount')
+    list_display = ('pk', 'recipe', 'ingredient', 'amount')
+    list_editable = ('recipe', 'ingredient', 'amount')
 
 
 @admin.register(models.Favorites)
