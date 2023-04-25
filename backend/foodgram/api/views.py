@@ -7,7 +7,8 @@ from rest_framework.response import Response
 
 from api.pagination import CustomPaginator
 from api.permissions import IsAuthorOrReadOnly
-from recipes.models import User, Tag, Ingredient, Recipe, Favorites
+from recipes.models import User, Tag, Ingredient, Recipe, Favorites, \
+    ShoppingCart
 from api.serializers import (PasswordSerializer, UserGetSerializer,
                              UserCreateSerializer, TagSerializer,
                              IngredientSerializer, RecipeGetSerializer,
@@ -151,3 +152,35 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                      recipe=recipe).delete()
             return Response({'detail': 'Рецепт успешно удален из избранного.'},
                             status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post', 'delete'],
+            permission_classes=(IsAuthenticated,))
+    def shopping_cart(self, request, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
+
+        if request.method == 'POST':
+            serializer = RecipeShortSerializer(recipe, data=request.data,
+                                               context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            if ShoppingCart.objects.filter(user=request.user,
+                                           recipe=recipe).exists():
+                return Response({'detail': 'Рецепт уже в списке покупок!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            ShoppingCart.objects.create(user=request.user, recipe=recipe)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
+            if not Favorites.objects.filter(user=request.user,
+                                            recipe=recipe).exists():
+                return Response({'detail': 'Рецепта нет в списке покупок!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            Favorites.objects.filter(user=request.user,
+                                     recipe=recipe).delete()
+            return Response({'detail': 'Рецепт успешно удален из списка '
+                                       'покупок.'},
+                            status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['get'], permission_classes=(IsAuthenticated,))
+    def download_shopping_cart(self, request):
+        pass
