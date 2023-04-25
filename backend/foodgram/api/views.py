@@ -117,13 +117,18 @@ class IngredientsViewSet(mixins.ListModelMixin,
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = IngredientSerializer
     permission_classes = (IsAuthorOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipeGetSerializer
         return RecipeCreateSerializer
+
+
+
+
+
+
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=(IsAuthenticated,))
@@ -181,6 +186,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                        'покупок.'},
                             status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'], permission_classes=(IsAuthenticated,))
+    @action(detail=False, methods=['get'],
+            permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         pass
