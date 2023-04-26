@@ -29,8 +29,15 @@ ALLOWED_HOSTS = ['localhost',
                  '158.160.28.61',
                  '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['http://158.160.28.61', 'http://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://158.160.28.61',
+                        'http://127.0.0.1',
+                        'http://localhost']
 
+CORS_ORIGIN_WHITELIST = [
+    'http://158.160.28.61',
+    'http://127.0.0.1',
+    'http://localhost'
+]
 # Application definition
 
 INSTALLED_APPS = [
