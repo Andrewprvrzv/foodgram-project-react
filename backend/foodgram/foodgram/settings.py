@@ -144,3 +144,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
     'SEARCH_PARAM': 'name',
 }
+DJOSER = {
+    'LOGIN_FIELD': 'email'
+}
