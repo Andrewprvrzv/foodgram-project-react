@@ -17,8 +17,8 @@ from api.serializers import (IngredientSerializer, PasswordSerializer,
                              SubscriptionSerializer, TagSerializer,
                              UserCreateSerializer, UserGetSerializer)
 from foodgram.settings import FILE
-from recipes.models import (Favorites, Ingredient, Recipe, ShoppingCart, Tag,
-                            User, IngredientCount)
+from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
+                            ShoppingCart, Tag, User)
 from users.models import Subscribe
 
 
