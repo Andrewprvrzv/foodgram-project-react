@@ -26,9 +26,9 @@ SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 DEBUG = False
 
 ALLOWED_HOSTS = ['localhost',
-                 'http://158.160.28.61',
+                 '158.160.28.61',
                  '127.0.0.1']
-
+CSRF_TRUSTED_ORIGINS = ['http://158.160.28.61']
 
 # Application definition
 
