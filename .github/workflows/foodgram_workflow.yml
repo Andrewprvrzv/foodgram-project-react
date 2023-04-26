@@ -45,7 +45,7 @@ jobs:
         with:
           context: backend/foodgram/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_123:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
 
   deploy:
     name: Deploy to server
