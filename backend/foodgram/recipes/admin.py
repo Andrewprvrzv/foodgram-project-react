@@ -17,8 +17,14 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class ItemInline(admin.StackedInline):
+    model = models.IngredientCount
+    extra = 1
+
+
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+    inlines = [ItemInline]
     list_display = ('pk', 'name', 'author', 'in_favorites')
     readonly_fields = ('in_favorites',)
     list_filter = ('name', 'author', 'tags')
