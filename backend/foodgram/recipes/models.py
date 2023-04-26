@@ -70,7 +70,7 @@ class Recipe(models.Model):
         max_length=200,
     )
     image = models.ImageField(
-        upload_to='images/',
+        upload_to='%Y/%m/%d',
         blank=True,
         verbose_name='Картинка',
     )
@@ -93,6 +93,11 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+        ordering = ['-id']
 
 
 class Favorites(models.Model):

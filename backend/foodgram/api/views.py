@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import make_password
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, filters, mixins, serializers
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -113,23 +114,19 @@ class IngredientsViewSet(mixins.ListModelMixin,
     serializer_class = IngredientSerializer
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+    search_fields = ('^name', '@name')
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    http_method_names = ['get', 'post', 'patch', 'create', 'delete']
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipeGetSerializer
         return RecipeCreateSerializer
-
-
-
-
-
-
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=(IsAuthenticated,))
