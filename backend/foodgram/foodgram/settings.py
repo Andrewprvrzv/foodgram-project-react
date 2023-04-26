@@ -26,7 +26,7 @@ SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 DEBUG = False
 
 ALLOWED_HOSTS = ['localhost',
-                 '158.160.28.61',
+                 'http://158.160.28.61',
                  '127.0.0.1']
 
 
