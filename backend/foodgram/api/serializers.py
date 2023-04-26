@@ -49,6 +49,7 @@ class UserCreateSerializer(UserCreateSerializer):
         return obj
 
     def create(self, validated_data):
+        """Создаем нового пользователя с правильной установкой пароля"""
         user = User(
             email=validated_data['email'],
             username=validated_data['username'],
