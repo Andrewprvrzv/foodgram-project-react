@@ -3,7 +3,7 @@ version: '3.8'
 services:
   front:
     container_name: foodgram-front
-    image: andrew87/foodgram_front:latest
+    image: andrew87/foodgram-front:latest
     volumes:
       - ./frontend/:/app/result_build/
 
