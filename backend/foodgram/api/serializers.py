@@ -154,10 +154,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientsSerializer(serializers.ModelSerializer):
     """Список ингредиенты и их количество."""
-    id = serializers.ReadOnlyField(source=Ingredient.id)
-    name = serializers.ReadOnlyField(source=Ingredient.name)
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source=Ingredient.measurement_unit
+        source='ingredient.measurement_unit'
     )
 
     class Meta:
@@ -169,7 +169,8 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     """[GET] Рецепт(ы)."""
     tags = TagSerializer(many=True, read_only=True)
     author = UserGetSerializer(read_only=True)
-    ingredients = RecipeIngredientsSerializer(many=True, read_only=True)
+    ingredients = RecipeIngredientsSerializer(many=True, read_only=True,
+                                              source='recipes')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()

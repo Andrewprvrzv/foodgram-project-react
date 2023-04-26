@@ -134,6 +134,16 @@ class IngredientCount(models.Model):
         validators=[validate_nonzero, ]
     )
 
+    class Meta:
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецептах'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_combination'
+            )
+        ]
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
