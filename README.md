@@ -1,4 +1,4 @@
-# Foodrgam
+# Foodgram
 __________________________
 ![example workflow](https://github.com/Andrewprvrzv/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 

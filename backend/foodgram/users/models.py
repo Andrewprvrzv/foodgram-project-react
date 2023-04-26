@@ -21,6 +21,8 @@ class User(AbstractUser):
         help_text='Введите свой электронный адрес'
     )
 
+    USERNAME_FIELD = 'email'
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
