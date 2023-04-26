@@ -1,20 +1,24 @@
 from django.contrib.auth.hashers import make_password
+from django.db.models import Sum
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, filters, mixins, serializers
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from api.filters import RecipeFilter
 from api.pagination import CustomPaginator
 from api.permissions import IsAuthorOrReadOnly
-from recipes.models import User, Tag, Ingredient, Recipe, Favorites, \
-    ShoppingCart
-from api.serializers import (PasswordSerializer, UserGetSerializer,
-                             UserCreateSerializer, TagSerializer,
-                             IngredientSerializer, RecipeGetSerializer,
-                             RecipeCreateSerializer, SubscriptionSerializer,
-                             SubscribeSerializer, RecipeShortSerializer)
+from api.serializers import (IngredientSerializer, PasswordSerializer,
+                             RecipeCreateSerializer, RecipeGetSerializer,
+                             RecipeShortSerializer, SubscribeSerializer,
+                             SubscriptionSerializer, TagSerializer,
+                             UserCreateSerializer, UserGetSerializer)
+from foodgram.settings import FILE
+from recipes.models import (Favorites, Ingredient, Recipe, ShoppingCart, Tag,
+                            User, IngredientCount)
 from users.models import Subscribe
 
 
@@ -121,6 +125,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'create', 'delete']
 
     def get_serializer_class(self):
@@ -186,5 +191,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
-    def download_shopping_cart(self, request):
-        pass
+    def download_shopping_cart(self, request, **kwargs):
+        ingredients = (
+            IngredientCount.objects
+            .filter(recipe__shopping_list__user=request.user)
+            .values('ingredient')
+            .annotate(total_amount=Sum('amount'))
+            .values_list('ingredient__name', 'total_amount',
+                         'ingredient__measurement_unit')
+        )
+        file_list = []
+        [file_list.append(
+            '{} - {} {}.'.format(*ingredient)) for ingredient in ingredients]
+        file = HttpResponse('Чтобы поесть купите'
+                            ' следующие продукты:\n' + '\n'.join(file_list),
+                            content_type='text/plain')
+        file['Content-Disposition'] = f'attachment; filename={FILE}'
+        return file

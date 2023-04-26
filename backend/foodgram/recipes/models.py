@@ -59,6 +59,8 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
+    pub_date = models.DateTimeField(auto_now_add=True)
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -97,7 +99,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ['-id']
+        ordering = ['-pub_date']
 
 
 class Favorites(models.Model):
@@ -153,11 +155,13 @@ class IngredientCount(models.Model):
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='shopping_list'
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='shopping_list'
     )
 
     class Meta:
