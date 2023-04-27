@@ -1,8 +1,10 @@
 from django.contrib import admin
-from users import models
+
+from recipes.models import User
+from users.models import Subscribe
 
 
-@admin.register(models.User)
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
@@ -17,7 +19,7 @@ class UserAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-@admin.register(models.Subscribe)
+@admin.register(Subscribe)
 class SubscribeAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'author',)
     list_editable = ('user', 'author')
