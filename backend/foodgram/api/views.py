@@ -118,7 +118,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
     serializer_class = IngredientSerializer
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name', )
+    search_fields = ('^name', '@name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
