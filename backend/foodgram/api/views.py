@@ -36,8 +36,7 @@ class UsersViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         if "password" in self.request.data:
-            password = make_password(self.request.data["password"])
-            serializer.save(password=password)
+            serializer.save(password=self.request.data["password"])
         else:
             serializer.save()
 
