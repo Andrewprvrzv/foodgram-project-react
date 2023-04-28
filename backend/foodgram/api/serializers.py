@@ -43,6 +43,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = RecipeShortSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
+    email = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
 
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
@@ -205,3 +207,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'tags', 'image',
                   'name', 'text',
                   'cooking_time', 'author')
+        extra_kwargs = {
+            'image': {'required': True, 'allow_blank': False},
+        }
