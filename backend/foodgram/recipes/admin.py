@@ -27,7 +27,7 @@ class RequiredInlineFormSet(BaseInlineFormSet):
 
 class ItemInline(admin.StackedInline):
     model = models.IngredientCount
-    extra = 0
+    extra = 1
     formset = RequiredInlineFormSet
 
 
