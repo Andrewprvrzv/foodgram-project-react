@@ -105,7 +105,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
                 and Favorites.objects.filter(
                     user=self.context['request'].user, recipe=obj
                 ).exists()
-            )
+        )
 
     def get_is_in_shopping_cart(self, obj):
         return (
@@ -113,7 +113,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
                 and ShoppingCart.objects.filter(
                     user=self.context['request'].user, recipe=obj
                 ).exists()
-            )
+        )
 
     class Meta:
         model = Recipe
