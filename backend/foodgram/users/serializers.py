@@ -3,7 +3,7 @@ from django.core import exceptions as django_exceptions
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from users.models import Subscribe, User
+from users.models import User
 
 
 class UserGetSerializer(UserSerializer):
@@ -11,8 +11,8 @@ class UserGetSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     def get_is_subscribed(self, obj):
-        if self.context.get('request') and \
-                not self.context['request'].user.is_anonymous:
+        if (self.context.get('request')
+                and not self.context['request'].user.is_anonymous):
             user = self.context['request'].user
             return user.subscriber.filter(author=obj).exists()
         return False

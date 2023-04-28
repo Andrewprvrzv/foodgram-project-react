@@ -19,8 +19,8 @@ from foodgram.settings import FILE
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
 from users.models import Subscribe
-from users.serializers import PasswordSerializer, UserGetSerializer, \
-    UserSignInSerializer
+from users.serializers import (PasswordSerializer, UserGetSerializer,
+                               UserSignInSerializer)
 
 
 class UsersViewSet(mixins.CreateModelMixin,
