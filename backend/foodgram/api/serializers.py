@@ -1,6 +1,7 @@
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
+import api.serializers
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
 from users.serializers import UserGetSerializer
@@ -41,10 +42,18 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     """Подписка на автора и отписка."""
     is_subscribed = serializers.SerializerMethodField()
-    recipes = RecipeShortSerializer(many=True, read_only=True)
+    recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
     email = serializers.ReadOnlyField()
     username = serializers.ReadOnlyField()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = Recipe.objects.filter(author=obj.author)
+        if limit:
+            recipes = recipes[:limit]
+        return RecipeShortSerializer(recipes, many=True, read_only=True).data
 
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
@@ -105,16 +114,16 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return (
                 self.context.get('request').user.is_authenticated
                 and Favorites.objects.filter(
-                    user=self.context['request'].user, recipe=obj
-                ).exists()
+            user=self.context['request'].user, recipe=obj
+        ).exists()
         )
 
     def get_is_in_shopping_cart(self, obj):
         return (
                 self.context.get('request').user.is_authenticated
                 and ShoppingCart.objects.filter(
-                    user=self.context['request'].user, recipe=obj
-                ).exists()
+            user=self.context['request'].user, recipe=obj
+        ).exists()
         )
 
     class Meta:
