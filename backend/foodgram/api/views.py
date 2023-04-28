@@ -179,11 +179,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            if not Favorites.objects.filter(user=request.user,
+            if not ShoppingCart.objects.filter(user=request.user,
                                             recipe=recipe).exists():
                 return Response({'detail': 'Рецепта нет в списке покупок!'},
                                 status=status.HTTP_400_BAD_REQUEST)
-            Favorites.objects.filter(user=request.user,
+            ShoppingCart.objects.filter(user=request.user,
                                      recipe=recipe).delete()
             return Response({'detail': 'Рецепт успешно удален из списка '
                                        'покупок.'},
