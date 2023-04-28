@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.forms import ModelForm, BaseInlineFormSet
 
 from recipes import models
 
@@ -17,16 +18,24 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class RequiredInlineFormSet(BaseInlineFormSet):
+    """
+    Generates an inline formset that is required
+    """
+
+    def _construct_form(self, i, **kwargs):
+        """
+        Override the method to change the form attribute empty_permitted
+        """
+        form = super(RequiredInlineFormSet, self)._construct_form(i, **kwargs)
+        form.empty_permitted = False
+        return form
+
+
 class ItemInline(admin.StackedInline):
     model = models.IngredientCount
     extra = 1
-
-    def has_add_permission(self, request, obj):
-        if obj and (
-                self.model.objects.filter(recipe=obj).count() >= self.max_num
-        ):
-            return False
-        return True
+    formset = RequiredInlineFormSet
 
 
 @admin.register(models.Recipe)
