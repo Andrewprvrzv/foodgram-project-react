@@ -118,7 +118,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
     serializer_class = IngredientSerializer
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name', )
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -180,11 +180,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         if request.method == 'DELETE':
             if not ShoppingCart.objects.filter(user=request.user,
-                                            recipe=recipe).exists():
+                                               recipe=recipe).exists():
                 return Response({'detail': 'Рецепта нет в списке покупок!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             ShoppingCart.objects.filter(user=request.user,
-                                     recipe=recipe).delete()
+                                        recipe=recipe).delete()
             return Response({'detail': 'Рецепт успешно удален из списка '
                                        'покупок.'},
                             status=status.HTTP_204_NO_CONTENT)
