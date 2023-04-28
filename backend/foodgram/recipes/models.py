@@ -73,7 +73,6 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         upload_to='%Y/%m/%d',
-        blank=True,
         verbose_name='Картинка',
     )
     text = models.TextField(
@@ -85,7 +84,7 @@ class Recipe(models.Model):
         help_text='Время приготовления в минутах',
         validators=[validate_nonzero, ]
     )
-    tags = models.ManyToManyField(Tag, null=False)
+    tags = models.ManyToManyField(Tag)
 
     ingredients = models.ManyToManyField(
         Ingredient,
