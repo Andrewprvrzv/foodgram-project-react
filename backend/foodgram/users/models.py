@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
+from foodgram.settings import REGEX_VALID_USERNAME
+
 
 class User(AbstractUser):
     username = models.CharField(
@@ -9,7 +11,7 @@ class User(AbstractUser):
         blank=False,
         unique=True,
         validators=[
-            RegexValidator('^[\w.@+-]+',
+            RegexValidator(REGEX_VALID_USERNAME,
                            message='Недопустимое имя.')
         ]
     )
@@ -20,6 +22,9 @@ class User(AbstractUser):
         verbose_name='Адрес электронной почты',
         help_text='Введите свой электронный адрес'
     )
+
+    REQUIRED_FIELDS = ('email', 'first_name',
+                       'last_name', 'password')
 
     class Meta:
         verbose_name = 'Пользователь'

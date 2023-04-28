@@ -1,7 +1,8 @@
-from api.validators import validate_nonzero
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
+
+from api.validators import validate_nonzero
 
 User = get_user_model()
 

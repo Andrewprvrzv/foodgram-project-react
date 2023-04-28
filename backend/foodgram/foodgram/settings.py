@@ -168,3 +168,4 @@ DJOSER = {
     'LOGIN_FIELD': 'email'
 }
 FILE = 'Ваш список покупок'
+REGEX_VALID_USERNAME = '^[\w.@+-]+'

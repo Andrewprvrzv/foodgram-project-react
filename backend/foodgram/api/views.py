@@ -1,25 +1,26 @@
-from api.filters import RecipeFilter
-from api.pagination import CustomPaginator
-from api.permissions import IsAuthorOrReadOnly
-from api.serializers import (IngredientSerializer, PasswordSerializer,
-                             RecipeCreateSerializer, RecipeGetSerializer,
-                             RecipeShortSerializer, SubscribeSerializer,
-                             SubscriptionSerializer, TagSerializer,
-                             UserCreateSerializer, UserGetSerializer)
 from django.contrib.auth.hashers import make_password
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
-                            ShoppingCart, Tag, User)
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from users.models import Subscribe
 
+from api.filters import RecipeFilter
+from api.pagination import CustomPaginator
+from api.permissions import IsAuthorOrReadOnly
+from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
+                             RecipeGetSerializer, RecipeShortSerializer,
+                             SubscribeSerializer, SubscriptionSerializer,
+                             TagSerializer)
 from foodgram.settings import FILE
+from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
+                            ShoppingCart, Tag, User)
+from users.models import Subscribe
+from users.serializers import PasswordSerializer, UserGetSerializer, \
+    UserSignInSerializer
 
 
 class UsersViewSet(mixins.CreateModelMixin,
@@ -32,7 +33,7 @@ class UsersViewSet(mixins.CreateModelMixin,
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return UserGetSerializer
-        return UserCreateSerializer
+        return UserSignInSerializer
 
     def perform_create(self, serializer):
         if "password" in self.request.data:
