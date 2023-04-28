@@ -85,7 +85,7 @@ class Recipe(models.Model):
         help_text='Время приготовления в минутах',
         validators=[validate_nonzero, ]
     )
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, null=False)
 
     ingredients = models.ManyToManyField(
         Ingredient,
