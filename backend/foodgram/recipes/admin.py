@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.forms import ModelForm, BaseInlineFormSet
+from django.forms import BaseInlineFormSet
 
 from recipes import models
 
