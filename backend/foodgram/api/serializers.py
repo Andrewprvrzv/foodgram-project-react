@@ -10,7 +10,6 @@ class RecipeShortSerializer(serializers.ModelSerializer):
     """Для использования в подписках."""
     name = serializers.ReadOnlyField()
     cooking_time = serializers.ReadOnlyField()
-    image = serializers.ReadOnlyField()
 
     class Meta:
         model = Recipe
@@ -206,3 +205,5 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'tags', 'image',
                   'name', 'text',
                   'cooking_time', 'author')
+
+

@@ -24,7 +24,7 @@ class User(AbstractUser):
     )
 
     REQUIRED_FIELDS = ('email', 'first_name',
-                       'last_name', 'password')
+                       'last_name')
 
     class Meta:
         verbose_name = 'Пользователь'
