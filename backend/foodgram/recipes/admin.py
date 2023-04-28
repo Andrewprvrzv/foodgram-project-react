@@ -4,16 +4,6 @@ from django.forms import BaseInlineFormSet
 from recipes import models
 
 
-class RequiredInlineFormSet(BaseInlineFormSet):
-    '''Класс формы для рецептов, который
-    обязывает добавить хотя бы одно значение в поле ингредиентов'''
-    def _construct_form(self, i, **kwargs):
-        form = super(RequiredInlineFormSet, self)._construct_form(i, **kwargs)
-        if i < 1:
-            form.empty_permitted = False
-        return form
-
-
 @admin.register(models.Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'measurement_unit')
@@ -32,11 +22,17 @@ class ItemInline(admin.StackedInline):
     model = models.IngredientCount
     extra = 1
 
+    def has_add_permission(self, request, obj):
+        if obj and (
+                self.model.objects.filter(recipe=obj).count() >= self.max_num
+        ):
+            return False
+        return True
+
 
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [ItemInline]
-    formset = RequiredInlineFormSet
     list_display = ('pk', 'name', 'author', 'in_favorites')
     readonly_fields = ('in_favorites',)
     list_filter = ('name', 'author', 'tags')
