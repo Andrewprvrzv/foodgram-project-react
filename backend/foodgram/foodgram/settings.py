@@ -169,3 +169,4 @@ DJOSER = {
 }
 FILE = 'Ваш список покупок'
 REGEX_VALID_USERNAME = '^[\w.@+-]+'
+REGEX_VALID_HEX_COLOR = '^#([a-fA-F0-9]{6})'

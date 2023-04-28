@@ -40,8 +40,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Подписка на автора и отписка."""
-    email = serializers.ReadOnlyField()
-    username = serializers.ReadOnlyField()
     is_subscribed = serializers.SerializerMethodField()
     recipes = RecipeShortSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
@@ -104,17 +102,18 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         return (
                 self.context.get('request').user.is_authenticated
-                and Favorites.objects.filter(user=self.context['request'].user,
-                                             recipe=obj).exists()
-        )
+                and Favorites.objects.filter(
+                    user=self.context['request'].user, recipe=obj
+                ).exists()
+            )
 
     def get_is_in_shopping_cart(self, obj):
         return (
                 self.context.get('request').user.is_authenticated
                 and ShoppingCart.objects.filter(
-            user=self.context['request'].user,
-            recipe=obj).exists()
-        )
+                    user=self.context['request'].user, recipe=obj
+                ).exists()
+            )
 
     class Meta:
         model = Recipe
@@ -206,11 +205,3 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'tags', 'image',
                   'name', 'text',
                   'cooking_time', 'author')
-        extra_kwargs = {
-            'ingredients': {'required': True, 'allow_blank': False},
-            'tags': {'required': True, 'allow_blank': False},
-            'image': {'required': True, 'allow_blank': False},
-            'name': {'required': True, 'allow_blank': False},
-            'text': {'required': True, 'allow_blank': False},
-            'cooking_time': {'required': True},
-        }

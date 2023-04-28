@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from api.validators import validate_nonzero
+from foodgram.settings import REGEX_VALID_HEX_COLOR, REGEX_VALID_USERNAME
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class Tag(models.Model):
         help_text='Выберите цвет тэга',
         validators=[
             RegexValidator(
-                '^#([a-fA-F0-9]{6})',
+                REGEX_VALID_HEX_COLOR,
                 message='Поле должно содержать HEX-код выбранного цвета.'
             )
         ]
@@ -32,7 +33,7 @@ class Tag(models.Model):
         help_text='Slug тэга',
         validators=[
             RegexValidator(
-                '^[\w.@+-]+',
+                REGEX_VALID_USERNAME,
                 message='Недопустимое имя.')
         ],
         unique=True
@@ -56,6 +57,14 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredients_measure'
+            )
+        ]
 
 
 class Recipe(models.Model):
