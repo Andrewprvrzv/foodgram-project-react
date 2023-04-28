@@ -48,14 +48,16 @@ class UsersViewSet(mixins.CreateModelMixin,
         else:
             serializer.save()
 
-    @action(methods=["get"], detail=False,
+    @action(methods=["get"],
+            detail=False,
             permission_classes=(IsAuthenticated,))
     def me(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=request.user.id)
         serializer = UserGetSerializer(user)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'],
+    @action(detail=False,
+            methods=['post'],
             permission_classes=(IsAuthenticated,))
     def set_password(self, request):
         serializer = PasswordSerializer(request.user, data=request.data)
@@ -64,7 +66,9 @@ class UsersViewSet(mixins.CreateModelMixin,
         return Response({'detail': 'Пароль успешно изменен!'},
                         status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'], pagination_class=CustomPaginator,
+    @action(detail=False,
+            methods=['get'],
+            pagination_class=CustomPaginator,
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         queryset = User.objects.filter(subscribing__user=request.user)
@@ -73,7 +77,8 @@ class UsersViewSet(mixins.CreateModelMixin,
                                             context={'request': request})
         return self.get_paginated_response(serializer.data)
 
-    @action(detail=True, methods=['post', 'delete'],
+    @action(detail=True,
+            methods=['post', 'delete'],
             pagination_class=CustomPaginator,
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, **kwargs):
