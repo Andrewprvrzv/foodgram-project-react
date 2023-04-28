@@ -1,9 +1,7 @@
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
-                            ShoppingCart, Tag, User)
-from users.models import Subscribe
+from recipes.models import Ingredient, IngredientCount, Recipe, Tag, User
 from users.serializers import UserGetSerializer
 
 
@@ -26,8 +24,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
                 and not self.context['request'].user.is_anonymous):
-            return Subscribe.objects.filter(user=self.context['request'].user,
-                                            author=obj).exists()
+            user = self.context['request'].user
+            return user.subscriber.filter(author=obj).exists()
         return False
 
     def get_recipes_count(self, obj):
@@ -50,8 +48,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
                 and not self.context['request'].user.is_anonymous):
-            return Subscribe.objects.filter(user=self.context['request'].user,
-                                            author=obj).exists()
+            user = self.context['request'].user
+            return user.subscriber.filter(author=obj).exists()
         return False
 
     def get_recipes_count(self, obj):
@@ -103,18 +101,17 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
 
     def get_is_favorited(self, obj):
+        user = self.context['request'].user
         return (
                 self.context.get('request').user.is_authenticated
-                and Favorites.objects.filter(user=self.context['request'].user,
-                                             recipe=obj).exists()
+                and user.favorite_user.filter(recipe=obj).exists()
         )
 
     def get_is_in_shopping_cart(self, obj):
+        user = self.context['request'].user
         return (
                 self.context.get('request').user.is_authenticated
-                and ShoppingCart.objects.filter(
-            user=self.context['request'].user,
-            recipe=obj).exists()
+                and user.shopping_list.objects.filter(recipe=obj).exists()
         )
 
     class Meta:
