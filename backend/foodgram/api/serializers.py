@@ -49,7 +49,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=obj.author)
+        recipes = Recipe.objects.filter(author=obj.id)
         if limit:
             recipes = recipes[:limit]
         return RecipeShortSerializer(recipes, many=True, read_only=True).data
