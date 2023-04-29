@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from api.validators import validate_nonzero
 from foodgram.settings import REGEX_VALID_HEX_COLOR, REGEX_VALID_USERNAME
 
 User = get_user_model()
@@ -92,7 +91,7 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время',
         help_text='Время приготовления в минутах',
-        validators=[validate_nonzero, ]
+        validators=(MinValueValidator(1),)
     )
     tags = models.ManyToManyField(Tag)
 
@@ -146,7 +145,7 @@ class IngredientCount(models.Model):
         related_name='ingredients',
     )
     amount = models.PositiveIntegerField(
-        'Количество',
+        verbose_name='Количество',
         validators=(MinValueValidator(1),)
     )
 

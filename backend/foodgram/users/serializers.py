@@ -7,7 +7,7 @@ from users.models import User
 
 
 class UserViewSerializer(UserSerializer):
-    """[GET] Cписок пользователей."""
+    """[GET, POST] Cписок пользователей."""
     is_subscribed = serializers.SerializerMethodField()
 
     def validate(self, obj):
