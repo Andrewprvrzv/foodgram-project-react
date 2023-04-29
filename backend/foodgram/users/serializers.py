@@ -19,6 +19,9 @@ class UserViewSerializer(UserSerializer):
             )
         return obj
 
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
                 and not self.context['request'].user.is_anonymous):
