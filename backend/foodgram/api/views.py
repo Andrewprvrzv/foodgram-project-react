@@ -19,8 +19,7 @@ from foodgram.settings import FILE
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
 from users.models import Subscribe
-from users.serializers import (PasswordSerializer, UserGetSerializer,
-                               UserSignInSerializer)
+from users.serializers import PasswordSerializer, UserViewSerializer
 
 
 class UsersViewSet(mixins.CreateModelMixin,
@@ -29,11 +28,7 @@ class UsersViewSet(mixins.CreateModelMixin,
                    viewsets.GenericViewSet):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
-
-    def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
-            return UserGetSerializer
-        return UserSignInSerializer
+    serializer_class = UserViewSerializer
 
     def perform_create(self, serializer):
         if "password" in self.request.data:
@@ -53,7 +48,7 @@ class UsersViewSet(mixins.CreateModelMixin,
             permission_classes=(IsAuthenticated,))
     def me(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserGetSerializer(user)
+        serializer = UserViewSerializer(user)
         return Response(serializer.data)
 
     @action(detail=False,

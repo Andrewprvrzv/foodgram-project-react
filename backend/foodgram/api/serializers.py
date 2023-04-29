@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
-from users.serializers import UserGetSerializer
+from users.serializers import UserViewSerializer
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
@@ -102,7 +102,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 class RecipeGetSerializer(serializers.ModelSerializer):
     """[GET] Рецепт(ы)."""
     tags = TagSerializer(many=True, read_only=True)
-    author = UserGetSerializer(read_only=True)
+    author = UserViewSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(many=True, read_only=True,
                                               source='recipes')
     is_favorited = serializers.SerializerMethodField()
@@ -145,7 +145,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """[POST, PATCH, DELETE] Создание, изменение и удаление рецепта."""
     tags = serializers.PrimaryKeyRelatedField(many=True,
                                               queryset=Tag.objects.all())
-    author = UserGetSerializer(read_only=True)
+    author = UserViewSerializer(read_only=True)
     id = serializers.ReadOnlyField()
     ingredients = RecipeIngredientCreateSerializer(many=True)
     image = Base64ImageField()

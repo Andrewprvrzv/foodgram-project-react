@@ -28,5 +28,5 @@ __________________________
 Andrew_prvrzv (andrew@prvrzv.com)
 
 Адрес развернутого проекта: http://158.160.28.61/recipes 
-Админка: admin:adminadmin
+Админка: admin:admin
 БД заполнена данными из учебного проекта.

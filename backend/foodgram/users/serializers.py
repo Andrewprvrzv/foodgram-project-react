@@ -1,14 +1,23 @@
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from users.models import User
 
 
-class UserGetSerializer(UserSerializer):
+class UserViewSerializer(UserSerializer):
     """[GET] Cписок пользователей."""
     is_subscribed = serializers.SerializerMethodField()
+
+    def validate(self, obj):
+        invalid_usernames = ['me', 'set_password',
+                             'subscriptions', 'subscribe']
+        if self.initial_data.get('username') in invalid_usernames:
+            raise serializers.ValidationError(
+                {'username': 'Вы не можете использовать этот username.'}
+            )
+        return obj
 
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
@@ -20,38 +29,9 @@ class UserGetSerializer(UserSerializer):
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed')
-
-
-class UserSignInSerializer(UserCreateSerializer):
-    """[POST] Создание нового пользователя."""
-
-    def validate(self, obj):
-        invalid_usernames = ['me', 'set_password',
-                             'subscriptions', 'subscribe']
-        if self.initial_data.get('username') in invalid_usernames:
-            raise serializers.ValidationError(
-                {'username': 'Вы не можете использовать этот username.'}
-            )
-        return obj
-
-    def create(self, validated_data):
-        """Создаем нового пользователя с правильной установкой пароля"""
-        user = User(
-            email=validated_data['email'],
-            username=validated_data['username'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
-    class Meta:
-        model = User
-        fields = ('email', 'id', 'username',
-                  'first_name', 'last_name',
-                  'password')
+                  'last_name', 'is_subscribed', 'password')
+        extra_kwargs = {'password': {'write_only': True},
+                        'is_subscribed': {'read_only': True}}
 
 
 class PasswordSerializer(serializers.Serializer):
