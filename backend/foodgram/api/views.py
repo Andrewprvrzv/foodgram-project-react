@@ -210,6 +210,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .annotate(total_amount=Sum('amount'))
             .values_list('ingredient__name', 'total_amount',
                          'ingredient__measurement_unit')
+            .order_by('ingredient__name')
         )
         file_list = []
         [file_list.append(
