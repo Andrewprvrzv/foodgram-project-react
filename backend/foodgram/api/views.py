@@ -133,63 +133,74 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
-    @action(detail=True, methods=['post', 'delete'],
+    @action(detail=True,
+            methods=['post'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
-
-        if request.method == 'POST':
-            serializer = RecipeShortSerializer(recipe, data=request.data,
-                                               context={"request": request})
-            serializer.is_valid(raise_exception=True)
-            if Favorites.objects.filter(user=request.user,
-                                        recipe=recipe).exists():
-                return Response({'detail': 'Рецепт уже в избранном!'},
-                                status=status.HTTP_400_BAD_REQUEST)
+        serializer = RecipeShortSerializer(
+            recipe,
+            data=request.data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        if Favorites.objects.filter(user=request.user,
+                                    recipe=recipe).exists():
+            return Response({'detail': 'Рецепт уже в избранном!'},
+                            status=status.HTTP_400_BAD_REQUEST)
             Favorites.objects.create(user=request.user, recipe=recipe)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
-            if not Favorites.objects.filter(user=request.user,
-                                            recipe=recipe).exists():
-                return Response({'detail': 'Рецепта не было в избранном!'
-                                           'Нечего удалять!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            Favorites.objects.filter(user=request.user,
-                                     recipe=recipe).delete()
-            return Response({'detail': 'Рецепт успешно удален из избранного.'},
-                            status=status.HTTP_204_NO_CONTENT)
+    @action(detail=True,
+            methods=['delete'],
+            permission_classes=(IsAuthenticated,))
+    def favorite(self, request, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
+        if not Favorites.objects.filter(user=request.user,
+                                        recipe=recipe).exists():
+            return Response({'detail': 'Рецепта не было в избранном!'
+                                       'Нечего удалять!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        Favorites.objects.filter(user=request.user,
+                                 recipe=recipe).delete()
+        return Response({'detail': 'Рецепт успешно удален из избранного.'},
+                        status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['post', 'delete'],
+    @action(detail=True,
+            methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
-
-        if request.method == 'POST':
-            serializer = RecipeShortSerializer(recipe, data=request.data,
-                                               context={"request": request})
-            serializer.is_valid(raise_exception=True)
-            if ShoppingCart.objects.filter(user=request.user,
-                                           recipe=recipe).exists():
-                return Response({'detail': 'Рецепт уже в списке покупок!'},
-                                status=status.HTTP_400_BAD_REQUEST)
+        serializer = RecipeShortSerializer(recipe,
+                                           data=request.data,
+                                           context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        if ShoppingCart.objects.filter(user=request.user,
+                                       recipe=recipe).exists():
+            return Response({'detail': 'Рецепт уже в списке покупок!'},
+                            status=status.HTTP_400_BAD_REQUEST)
             ShoppingCart.objects.create(user=request.user, recipe=recipe)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
-            if not ShoppingCart.objects.filter(user=request.user,
-                                               recipe=recipe).exists():
-                return Response({'detail': 'Рецепта нет в списке покупок!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            ShoppingCart.objects.filter(user=request.user,
-                                        recipe=recipe).delete()
-            return Response({'detail': 'Рецепт успешно удален из списка '
-                                       'покупок.'},
-                            status=status.HTTP_204_NO_CONTENT)
+    @action(detail=True,
+            methods=['delete'],
+            permission_classes=(IsAuthenticated,))
+    def shopping_cart(self, request, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
+        if not ShoppingCart.objects.filter(user=request.user,
+                                           recipe=recipe).exists():
+            return Response({'detail': 'Рецепта нет в списке покупок!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        ShoppingCart.objects.filter(user=request.user,
+                                    recipe=recipe).delete()
+        return Response({'detail': 'Рецепт успешно удален из списка '
+                                   'покупок.'},
+                        status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'],
+    @action(detail=False,
+            methods=['get'],
             permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request, **kwargs):
         ingredients = (
