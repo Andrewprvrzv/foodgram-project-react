@@ -180,7 +180,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                        recipe=recipe).exists():
             return Response({'detail': 'Рецепт уже в списке покупок!'},
                             status=status.HTTP_400_BAD_REQUEST)
-            ShoppingCart.objects.create(user=request.user, recipe=recipe)
+        ShoppingCart.objects.create(user=request.user, recipe=recipe)
         return Response(serializer.data,
                         status=status.HTTP_201_CREATED)
 
