@@ -17,7 +17,7 @@ urlpatterns = [
         'post': 'retrieve',
         'delete': 'retrieve',
     })),
+    path(r'auth/', include('djoser.urls.authtoken')),
     path(r'', include('djoser.urls')),
-    path(r'^auth/', include('djoser.urls.authtoken')),
     path('', include(router.urls)),
 ]
