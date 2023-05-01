@@ -22,8 +22,9 @@ class User(AbstractUser):
         verbose_name='Адрес электронной почты',
         help_text='Введите свой электронный адрес'
     )
+    USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = ('email', 'first_name',
+    REQUIRED_FIELDS = ('username', 'first_name',
                        'last_name')
 
     class Meta:

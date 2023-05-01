@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,47 +17,6 @@ from foodgram.settings import FILE
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
 from users.models import Subscribe
-from users.serializers import PasswordSerializer, UserViewSerializer
-
-
-class UsersViewSet(mixins.CreateModelMixin,
-                   mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   viewsets.GenericViewSet):
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = UserViewSerializer
-
-    def perform_create(self, serializer):
-        if "password" in self.request.data:
-            serializer.save(password=self.request.data["password"])
-        else:
-            serializer.save()
-
-    def perform_update(self, serializer):
-        if "password" in self.request.data:
-            password = make_password(self.request.data["password"])
-            serializer.save(password=password)
-        else:
-            serializer.save()
-
-    @action(methods=["get"],
-            detail=False,
-            permission_classes=(IsAuthenticated,))
-    def me(self, request, *args, **kwargs):
-        user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserViewSerializer(user)
-        return Response(serializer.data)
-
-    @action(detail=False,
-            methods=['post'],
-            permission_classes=(IsAuthenticated,))
-    def set_password(self, request):
-        serializer = PasswordSerializer(request.user, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response({'detail': 'Пароль успешно изменен!'},
-                        status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscriptionsViewSet(mixins.ListModelMixin,
