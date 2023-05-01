@@ -63,11 +63,13 @@ class UsersViewSet(mixins.CreateModelMixin,
 
 class SubscriptionsViewSet(mixins.ListModelMixin,
                            viewsets.GenericViewSet):
-    queryset = User.objects.all()
     serializer_class = SubscribeSerializer
     pagination_class = CustomPaginator
     permission_classes = (IsAuthenticated,)
     http_method_names = ('get',)
+
+    def get_queryset(self):
+        return User.objects.filter(subscribing__user=self.request.user)
 
 
 class SubscribeViewSet(viewsets.ViewSet):
