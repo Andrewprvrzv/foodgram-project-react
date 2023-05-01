@@ -13,8 +13,7 @@ from api.pagination import CustomPaginator
 from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeGetSerializer, RecipeShortSerializer,
-                             SubscribeSerializer, SubscriptionSerializer,
-                             TagSerializer)
+                             SubscribeSerializer, TagSerializer)
 from foodgram.settings import FILE
 from recipes.models import (Favorites, Ingredient, IngredientCount, Recipe,
                             ShoppingCart, Tag, User)
