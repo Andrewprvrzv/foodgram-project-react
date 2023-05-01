@@ -181,6 +181,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Рецепт успешно удален из списка '
                                    'покупок.'},
                         status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
