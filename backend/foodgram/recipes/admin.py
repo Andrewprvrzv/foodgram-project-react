@@ -18,18 +18,9 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-class RequiredInlineFormSet(BaseInlineFormSet):
-    def _construct_form(self, i, **kwargs):
-        form = super(RequiredInlineFormSet, self)._construct_form(i, **kwargs)
-        form.empty_permitted = False
-        return form
-
-
 class ItemInline(admin.StackedInline):
     model = models.IngredientCount
     extra = 1
-    formset = RequiredInlineFormSet
-
 
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
