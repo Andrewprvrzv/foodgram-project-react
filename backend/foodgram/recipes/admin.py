@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.forms import BaseInlineFormSet
 
 from recipes import models
 
@@ -21,6 +20,7 @@ class TagAdmin(admin.ModelAdmin):
 class ItemInline(admin.StackedInline):
     model = models.IngredientCount
     extra = 1
+
 
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
