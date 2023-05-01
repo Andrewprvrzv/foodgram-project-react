@@ -139,7 +139,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
 
         if request.method == 'POST':
-            serializer = RecipeShortSerializer(recipe, data=request.data,
+            serializer = RecipeShortSerializer(recipe,
+                                               data=request.data,
                                                context={"request": request})
             serializer.is_valid(raise_exception=True)
             if Favorites.objects.filter(user=request.user,
@@ -167,7 +168,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
 
         if request.method == 'POST':
-            serializer = RecipeShortSerializer(recipe, data=request.data,
+            serializer = RecipeShortSerializer(recipe,
+                                               data=request.data,
                                                context={"request": request})
             serializer.is_valid(raise_exception=True)
             if ShoppingCart.objects.filter(user=request.user,
@@ -199,6 +201,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .annotate(total_amount=Sum('amount'))
             .values_list('ingredient__name', 'total_amount',
                          'ingredient__measurement_unit')
+            .order_by('ingredient__name')
         )
         file_list = []
         [file_list.append(
