@@ -10,18 +10,6 @@ class UserViewSerializer(UserSerializer):
     """[GET, POST] Cписок пользователей."""
     is_subscribed = serializers.SerializerMethodField()
 
-    def validate(self, obj):
-        invalid_usernames = ['me', 'set_password',
-                             'subscriptions', 'subscribe']
-        if self.initial_data.get('username') in invalid_usernames:
-            raise serializers.ValidationError(
-                {'username': 'Вы не можете использовать этот username.'}
-            )
-        return obj
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
     def get_is_subscribed(self, obj):
         if (self.context.get('request')
                 and not self.context['request'].user.is_anonymous):
@@ -33,8 +21,6 @@ class UserViewSerializer(UserSerializer):
         model = User
         fields = ('email', 'id', 'username', 'first_name',
                   'last_name', 'is_subscribed', 'password')
-        extra_kwargs = {'password': {'write_only': True},
-                        'is_subscribed': {'read_only': True}}
 
 
 class PasswordSerializer(serializers.Serializer):
