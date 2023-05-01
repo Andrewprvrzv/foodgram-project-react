@@ -61,23 +61,20 @@ class UsersViewSet(mixins.CreateModelMixin,
         return Response({'detail': 'Пароль успешно изменен!'},
                         status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False,
-            methods=['get'],
-            pagination_class=CustomPaginator,
-            permission_classes=(IsAuthenticated,))
-    def subscriptions(self, request):
-        queryset = User.objects.filter(subscribing__user=request.user)
-        page = self.paginate_queryset(queryset)
-        serializer = SubscriptionSerializer(page, many=True,
-                                            context={'request': request})
-        return self.get_paginated_response(serializer.data)
 
-    @action(detail=True,
-            methods=['post', 'delete'],
-            pagination_class=CustomPaginator,
-            permission_classes=(IsAuthenticated,))
-    def subscribe(self, request, **kwargs):
-        author = get_object_or_404(User, pk=kwargs['pk'])
+class SubscriptionsViewSet(mixins.ListModelMixin,
+                           viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = SubscribeSerializer
+    pagination_class = CustomPaginator
+    permission_classes = (IsAuthenticated,)
+    http_method_names = ('get',)
+
+
+
+class SubscribeViewSet(viewsets.ViewSet):
+    def retrieve(self, request, pk=None):
+        author = get_object_or_404(User, pk=pk)
 
         if request.method == 'POST':
             serializer = SubscribeSerializer(
@@ -126,7 +123,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    http_method_names = ['get', 'post', 'patch', 'create', 'delete']
+    http_method_names = ('get', 'post', 'patch', 'create', 'delete')
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
