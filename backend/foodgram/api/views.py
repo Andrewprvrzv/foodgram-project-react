@@ -138,6 +138,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
+        if request.method == 'POST':
+            serializer = RecipeShortSerializer(recipe,
+                                               data=request.data,
+                                               context={"request": request})
+            serializer.is_valid(raise_exception=True)
         if not Favorites.objects.filter(user=request.user,
                                         recipe=recipe).exists():
             return Response({'detail': 'Рецепта не было в избранном!'
@@ -172,6 +177,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
         recipe = get_object_or_404(Recipe, pk=kwargs['pk'])
+        if request.method == 'POST':
+            serializer = RecipeShortSerializer(recipe,
+                                               data=request.data,
+                                               context={"request": request})
+            serializer.is_valid(raise_exception=True)
         if not ShoppingCart.objects.filter(user=request.user,
                                            recipe=recipe).exists():
             return Response({'detail': 'Рецепта нет в списке покупок!'},
