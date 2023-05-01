@@ -70,7 +70,6 @@ class SubscriptionsViewSet(mixins.ListModelMixin,
     http_method_names = ('get',)
 
 
-
 class SubscribeViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         author = get_object_or_404(User, pk=pk)
