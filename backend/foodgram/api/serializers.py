@@ -14,6 +14,7 @@ class RecipeShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+        read_only_fields = ('image',)
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
@@ -193,6 +194,3 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'tags', 'image',
                   'name', 'text',
                   'cooking_time', 'author')
-        extra_kwargs = {
-            'image': {'required': True, 'allow_blank': False},
-        }
