@@ -30,30 +30,35 @@ class SubscriptionsViewSet(mixins.ListModelMixin,
         return User.objects.filter(subscribing__user=self.request.user)
 
 
-class SubscribeViewSet(viewsets.ViewSet):
-    def retrieve(self, request, pk=None):
-        author = get_object_or_404(User, pk=pk)
+class SubscribeViewSet(mixins.RetrieveModelMixin,
+                       viewsets.GenericViewSet):
+    @action(detail=True,
+            methods=['post', ],
+            permission_classes=(IsAuthenticated,),
+            url_path='')
+    def post_subscribe(self, request, **kwargs):
+        author = get_object_or_404(User, pk=kwargs['pk'])
+        serializer = SubscribeSerializer(
+            author, data=request.data, context={"request": request})
+        if request.user == author:
+            return Response({'detail': 'Ошибка подписки'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if Subscribe.objects.filter(user=request.user,
+                                    author=author).exists():
+            return Response({'detail': 'Вы уже подписаны'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        Subscribe.objects.create(user=request.user, author=author)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED)
 
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
-                author, data=request.data, context={"request": request})
-            if request.user == author:
-                return Response({'detail': 'Ошибка подписки'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if Subscribe.objects.filter(user=request.user,
-                                        author=author).exists():
-                return Response({'detail': 'Вы уже подписаны'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            serializer.is_valid(raise_exception=True)
-            Subscribe.objects.create(user=request.user, author=author)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-
-        if request.method == 'DELETE':
-            get_object_or_404(Subscribe, user=request.user,
-                              author=author).delete()
-            return Response({'detail': 'Успешная отписка'},
-                            status=status.HTTP_204_NO_CONTENT)
+    @post_subscribe.mapping.delete
+    def delete_subscribe(self, request, **kwargs):
+        author = get_object_or_404(User, pk=kwargs['pk'])
+        get_object_or_404(Subscribe, user=request.user,
+                          author=author).delete()
+        return Response({'detail': 'Успешная отписка'},
+                        status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(mixins.ListModelMixin,

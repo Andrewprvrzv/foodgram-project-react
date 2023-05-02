@@ -11,8 +11,8 @@ router.register(r'recipes', RecipeViewSet)
 
 urlpatterns = [
     path(r'users/<int:pk>/subscribe/', SubscribeViewSet.as_view({
-        'post': 'retrieve',
-        'delete': 'retrieve',
+        'post': 'post_subscribe',
+        'delete': 'delete_subscribe',
     })),
     path(r'users/subscriptions/', SubscriptionsViewSet.as_view({
         'get': 'list',
