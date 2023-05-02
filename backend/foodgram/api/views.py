@@ -166,9 +166,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                          'ingredient__measurement_unit')
             .order_by('ingredient__name')
         )
-        file_list = []
-        [file_list.append(
-            '{} - {} {}.'.format(*ingredient)) for ingredient in ingredients]
+        file_list = ['{} - {} {}.'.format(*ingredient)
+                     for ingredient in ingredients]
         file = HttpResponse('Чтобы поесть купите'
                             ' следующие продукты:\n' + '\n'.join(file_list),
                             content_type='text/plain')
