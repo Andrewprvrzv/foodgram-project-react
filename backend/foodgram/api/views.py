@@ -64,7 +64,6 @@ class SubscribeViewSet(mixins.RetrieveModelMixin,
 class TagViewSet(mixins.ListModelMixin,
                  mixins.RetrieveModelMixin,
                  viewsets.GenericViewSet):
-    permission_classes = (AllowAny,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
@@ -73,7 +72,6 @@ class TagViewSet(mixins.ListModelMixin,
 class IngredientsViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin,
                          viewsets.GenericViewSet):
-    permission_classes = (AllowAny,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
