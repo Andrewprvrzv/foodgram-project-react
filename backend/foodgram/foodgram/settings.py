@@ -165,8 +165,10 @@ REST_FRAMEWORK = {
     'SEARCH_PARAM': 'name',
 }
 DJOSER = {
-    'LOGIN_FIELD': 'email'
+    'LOGIN_FIELD': 'email',
+    'PERMISSIONS': {'user': ['rest_framework.permissions.AllowAny']},
 }
+
 FILE = 'Ваш список покупок'
 REGEX_VALID_USERNAME = '^[\w.@+-]+'
 REGEX_VALID_HEX_COLOR = '^#([a-fA-F0-9]{6})'
