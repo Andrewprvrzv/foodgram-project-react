@@ -167,7 +167,7 @@ REST_FRAMEWORK = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.CurrentUserOrAdminOrReadOnly']
+        'user': ['rest_framework.permissions.AllowAny']
     },
 }
 
