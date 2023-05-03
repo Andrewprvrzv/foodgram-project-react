@@ -166,7 +166,9 @@ REST_FRAMEWORK = {
 }
 DJOSER = {
     'LOGIN_FIELD': 'email',
-    'PERMISSIONS': {'user': ['rest_framework.permissions.AllowAny']},
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.CurrentUserOrAdminOrReadOnly']
+    },
 }
 
 FILE = 'Ваш список покупок'
